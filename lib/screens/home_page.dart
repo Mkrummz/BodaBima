@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:bima/l10n/localizations.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import '../services/demo_data.dart';
 
 class Homepage extends StatefulWidget {
   final SupabaseClient supabaseClient;
@@ -75,16 +76,25 @@ class _HomepageState extends State<Homepage> {
           .limit(10);
 
       setState(() {
-        medicalPlans = medicalResponse;
-        motorPlans = motorResponse;
-        homePlans = homeResponse;
-        travelPlans = travelResponse;
+        medicalPlans = medicalResponse.isNotEmpty
+            ? medicalResponse
+            : DemoData.medicalPlans;
+        motorPlans =
+            motorResponse.isNotEmpty ? motorResponse : DemoData.motorPlans;
+        homePlans = homeResponse.isNotEmpty ? homeResponse : DemoData.homePlans;
+        travelPlans =
+            travelResponse.isNotEmpty ? travelResponse : DemoData.travelPlans;
         isLoading = false;
       });
     } catch (error) {
+      // Fall back to bundled demo data so the app works as a standalone demo
+      // when the backend is unreachable.
       setState(() {
+        medicalPlans = DemoData.medicalPlans;
+        motorPlans = DemoData.motorPlans;
+        homePlans = DemoData.homePlans;
+        travelPlans = DemoData.travelPlans;
         isLoading = false;
-        errorMessage = error.toString();
       });
     }
   }
