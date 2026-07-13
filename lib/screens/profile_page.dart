@@ -24,7 +24,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService(); // Instantiate AuthService
+  late final AuthService _authService;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -32,6 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    _authService = AuthService(client: widget.supabaseClient);
   }
 
   Future<void> _handleSignIn() async {
