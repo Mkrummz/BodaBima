@@ -7,7 +7,12 @@ enum PaymentProvider { mpesa, tigoPesa, airtelMoney }
 
 class PaymentService {
   final String baseUrl = 'your-payment-gateway-url';
-  final storage = FlutterSecureStorage();
+  final http.Client _client;
+  final FlutterSecureStorage storage;
+
+  PaymentService({http.Client? client, FlutterSecureStorage? storage})
+      : _client = client ?? http.Client(),
+        storage = storage ?? const FlutterSecureStorage();
 
   Future<Map<String, dynamic>> initiatePayment({
     required String phoneNumber,
@@ -16,7 +21,7 @@ class PaymentService {
     required String reference,
   }) async {
     try {
-      final response = await http.post(
+      final response = await _client.post(
         Uri.parse('$baseUrl/initiate'),
         body: {
           'phoneNumber': phoneNumber,
@@ -42,7 +47,7 @@ class PaymentService {
 
   Future<Map<String, dynamic>> checkPaymentStatus(String reference) async {
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('$baseUrl/status/$reference'),
       );
       return {'success': true, 'status': response.body};
